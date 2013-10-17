@@ -43,6 +43,7 @@ public:
     float lastX;
     float lastY;
     
+    
    cocos2d::CCPoint lastPosition;
     
 

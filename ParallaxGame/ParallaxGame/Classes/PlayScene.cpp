@@ -98,34 +98,30 @@ void PlayScene::didAccelerate(cocos2d::CCAcceleration* accelerationValue)
     float xAngle =  asin(firstX);
     float yAngle =  asin(firstY);
     
-    lastX = resultX;
-    lastY = resultY;
+    resultX = (pAccelerationValue.x + lastX + dtX)/3;
+    resultY = (pAccelerationValue.y + lastY + dtY)/3;
     
-    resultX = pAccelerationValue.x;
-    resultY = pAccelerationValue.y;
-    
-    if(fabs(resultX - lastX )<.001){
-        //resultX = lastX;
-    }else{
         float avgXAngle =  asin(resultX);
         avgXAngle -= xAngle;
         //prevent negative values by squaring
         resultX = sin(avgXAngle)*sin(avgXAngle);
-        //resultX = .01 * resultX + (1.0 - 0.1) * pAccelerationValue->x;
         resultX = pAccelerationValue.x * kFilteringFactor + resultX * (1.0 - kFilteringFactor);
-    }
-    
-    if(fabs(resultY - lastY)<.001){
-        //resultY = lastY;
-    }else{
+
         float avgYAngle =  asin(resultY);
         avgYAngle -= yAngle;
         //prevent negative values by squaring
         resultY = sin(avgYAngle)*sin(avgYAngle);
-        //resultY = .01 * resultY + (1.0 - 0.1) * pAccelerationValue->y;
         resultY = pAccelerationValue.y * kFilteringFactor + resultY * (1.0 - kFilteringFactor);
-    }
-
+    
+    dtX = lastX;
+    dtY = lastY;
+    
+    lastX = resultX;
+    lastY = resultY;
+    
+    resultX = (resultX + lastX + dtX)/3;
+    resultY = (resultY + lastY + dtY)/3;
+    
     if (isnan(resultX)) {
         resultX = lastX;
     }
@@ -175,13 +171,13 @@ void PlayScene::update(float dt){
     }
     */
     //if (fabs((resultX)*winSize.width - parallaxNode->getPosition().x) > .5) {
-         parallaxNode->setPosition(ccp((resultX)*winSize.width*.5,parallaxNode->getPosition().y));
+         parallaxNode->setPosition(ccp((resultX)*winSize.width,parallaxNode->getPosition().y));
     //}
     //if (fabs((resultY)*winSize.height - parallaxNode->getPosition().y) > .5) {
-        parallaxNode->setPosition(ccp(parallaxNode->getPosition().x,(resultY)*winSize.height*.5));
+        parallaxNode->setPosition(ccp(parallaxNode->getPosition().x,(resultY)*winSize.height));
     //}
     //parallaxNode->setPosition(ccp((resultX)*winSize.width,(resultY)*winSize.height));
-    
+    /*
     if (knobObject->sprite->getPosition().x > winSize.width) {
         knobObject->sprite->wrapperCountX++;
     }
@@ -238,7 +234,7 @@ void PlayScene::update(float dt){
     LEDOnObject->sprite->setPosition(ccp(WPLEDOn.x - (winSize.width*LEDOnObject->sprite->wrapperCountX), WPLEDOn.y - (winSize.height*LEDOnObject->sprite->wrapperCountY)));
     LEDOffObject->sprite->setPosition(ccp(WPLEDOff.x - (winSize.width*LEDOffObject->sprite->wrapperCountX), WPLEDOff.y - (winSize.height*LEDOffObject->sprite->wrapperCountY)));
     volumeObject->sprite->setPosition(ccp(WPVolume.x - (winSize.width*volumeObject->sprite->wrapperCountX), WPVolume.y - (winSize.height*volumeObject->sprite->wrapperCountY)));
-     
+     */
     
     
     knobObject->sprite->setPosition(WPKnob);
